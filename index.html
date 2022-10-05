@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Posts</title>
+        <meta name="author" content="github@vinicius-goncalves">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="main-style.css" type="text/css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    </head>
+    <body>
+
+        <header>
+            <h1>Posts and Comments</h1>
+            <span>Local version</span>
+        </header>
+
+        <div class="posts-wrapper">
+            <div class="post" data-post-id="9999">
+
+                <div class="post-header">
+                    <h2 class="post-title">Title</h2>
+                    <span class="post-id">(9999)</span>
+                </div>
+
+                <p class="post-description">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos perferendis temporibus consequatur impedit excepturi, incidunt architecto, voluptate neque aut obcaecati iure perspiciatis pariatur qui, ducimus amet ipsum provident saepe harum tenetur consectetur? Sunt inventore ipsam modi a aliquid repudiandae voluptatem eos. Aspernatur adipisci, harum nemo ipsam sequi voluptatem accusamus id!</p>
+                <ul class="post-statistics">
+                    <li>Posted by: a32fd</li>
+                    <li>Total comments: 0</li>
+                </ul>
+
+                <div class="comments-section">
+                    <h2 class="comments-sectiont-title">Comments</h2>
+                    <!-- <span class="comments-not-found">There are not any comments yet</span> -->
+
+                    <div class="commentary" data-comment-user-id="9999" data-comment-id="12rafF">
+                        <p class="posted-by">Posted by: <span>?</span></p>
+                        <p class="user-commentary">Commentary</p>
+                    </div>
+
+                </div>
+
+                <div class="post-avaliations">
+                    <input class="input" type="text" data-js="comment-text">
+                    <button class="input" type="button" data-js="add-comment">
+                        <i class="material-icons">reply</i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <script src="js/app.js"></script>
+        <script src="js/utils.js"></script>
+        <script src="js/storage.js"></script>
+
+    </body>
+</html>
