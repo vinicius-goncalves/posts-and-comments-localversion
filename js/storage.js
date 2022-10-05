@@ -1,26 +1,11 @@
+import { Post, Comment } from './post-classes.js'
+export { getAllPosts, createNewPost, addNewComment }
+
 const DB_NAME = 'posts-and-comments'
 const DB_VERSION = 1
 const OBJ_STORE_NAME = 'data'
 
 const db = indexedDB.open(DB_NAME, DB_VERSION)
-
-const newPost = {
-    id: 9999,
-    title: 'Title',
-    description: 'Lorem ispum',
-    comments: [
-        { postedBy: 'ABCdef', commentary: 'Lorem ipsum' }
-    ]
-}
-
-class Post {
-    constructor(id, title, description, comments) {
-        this.id = id,
-        this.title = title,
-        this.description = description
-        this.comments = []
-    }
-}
 
 const dbPromise = new Promise(resolve => {
 
@@ -41,13 +26,26 @@ const dbPromise = new Promise(resolve => {
             store.createIndex('idIndex', 'id', { unique: true })
             store.createIndex('titleIndex', 'title', { unique: false })
             store.createIndex('descriptionIndex', 'description', { unique: false })
-            store.put(newPost)
 
         }
     })
 })
 
-function addNewPost(id, title, description) {
+function getAllPosts(callback) {
+    
+    dbPromise.then(db => {
+        const transaction = db.transaction(OBJ_STORE_NAME, 'readonly')
+        const store = transaction.objectStore(OBJ_STORE_NAME)
+        const query = store.getAll()
+        
+        query.addEventListener('success', ({ target }) => {
+            const posts = target.result
+            callback(posts)
+        })
+    })
+}
+
+function createNewPost(id, title, description) {
 
     dbPromise.then(db => {
         
@@ -66,16 +64,27 @@ function addNewComment(id, postedBy, comment) {
         
         const transaction = db.transaction(OBJ_STORE_NAME, 'readwrite')
         const store = transaction.objectStore(OBJ_STORE_NAME)
-        
-        const idFound = store.get(id)
+        const cursor = store.openCursor()
 
-        idFound.addEventListener('success', ({ target }) => {
+        cursor.addEventListener('success', ({ target }) => {
             
-            target.result.comments.push({
-                postedBy, comment
-            }) 
+            const { ['result']: cursor } = target
+            
+            if(!cursor) { return }
 
-            store.put(target.result)
+            const post = cursor.value
+            const { ['id']: postId, comments } = post
+
+            if(postId === id) {
+                
+                const newComment = new Comment(postedBy, comment)
+                comments.push(newComment)
+
+                const update = cursor.update(post)
+
+            }
+            
+            cursor.continue()
 
         })
     })
