@@ -9,6 +9,26 @@
     </head>
     <body>
 
+        <button data-open-target="create-new-post">
+            New post
+            <i class="material-icons">add_circle</i>
+        </button>
+
+        <div data-wrapper="create-new-post">
+            <div data-content="create-new-post">
+
+                <i class="material-icons" data-target-close="create-new-post">close</i>
+
+                <h1>Post creation</h1>
+
+                <input type="text" data-new-post="title">
+                <input type="text" data-new-post="description">
+
+                <input type="button" data-button="create-new-post" value="Create">
+
+            </div>
+        </div>
+
         <header>
             <h1>Posts and Comments</h1>
             <span>Local version</span>
@@ -16,7 +36,7 @@
 
         <div class="posts-wrapper">
 
-            <!-- <div class="post" data-post-id="9999">
+            <div class="post" data-post-id="9999">
 
                 <div class="post-header">
                     <h2 class="post-title">Title</h2>
@@ -46,11 +66,11 @@
                         <i class="material-icons">reply</i>
                     </button>
                 </div>
-            </div> -->
+            </div>
 
         </div>
 
-        <script src="js/app.js" type="module"></script>
+        <script src="js/main/app.js" type="module"></script>
         <script src="js/storage.js" type="module"></script>
         <script src="js/utils.js"></script>
 

@@ -1,5 +1,5 @@
 import { Post, Comment } from './post-classes.js'
-export { getAllPosts, createNewPost, addNewComment }
+export { STORAGE }
 
 const DB_NAME = 'posts-and-comments'
 const DB_VERSION = 1
@@ -31,61 +31,68 @@ const dbPromise = new Promise(resolve => {
     })
 })
 
-function getAllPosts(callback) {
+const STORAGE = {
+
+    makeTransaction: function() {
+
+    },
+
+    getAllPosts: function (callback) {
     
-    dbPromise.then(db => {
-        const transaction = db.transaction(OBJ_STORE_NAME, 'readonly')
-        const store = transaction.objectStore(OBJ_STORE_NAME)
-        const query = store.getAll()
-        
-        query.addEventListener('success', ({ target }) => {
-            const posts = target.result
-            callback(posts)
+        dbPromise.then(db => {
+            const transaction = db.transaction(OBJ_STORE_NAME, 'readonly')
+            const store = transaction.objectStore(OBJ_STORE_NAME)
+            const query = store.getAll()
+            
+            query.addEventListener('success', ({ target }) => {
+                const posts = target.result
+                callback(posts)
+            })
         })
-    })
-}
-
-function createNewPost(id, title, description) {
-
-    dbPromise.then(db => {
-        
-        const transaction = db.transaction(OBJ_STORE_NAME, 'readwrite')
-        const store = transaction.objectStore(OBJ_STORE_NAME)
-
-        const newPostObj = new Post(id, title, description)
-        store.put(newPost)
-
-    })
-}
-
-function addNewComment(id, postedBy, comment) {
-
-    dbPromise.then(db => {
-        
-        const transaction = db.transaction(OBJ_STORE_NAME, 'readwrite')
-        const store = transaction.objectStore(OBJ_STORE_NAME)
-        const cursor = store.openCursor()
-
-        cursor.addEventListener('success', ({ target }) => {
+    },
+    
+    createNewPost: function (id, title, description) {
+    
+        dbPromise.then(db => {
             
-            const { ['result']: cursor } = target
+            const transaction = db.transaction(OBJ_STORE_NAME, 'readwrite')
+            const store = transaction.objectStore(OBJ_STORE_NAME)
+    
+            const newPostObj = new Post(id, title, description)
+            store.put(newPostObj)
+    
+        })
+    },
+    
+    addNewComment: function (id, postedBy, comment) {
+    
+        dbPromise.then(db => {
             
-            if(!cursor) { return }
-
-            const post = cursor.value
-            const { ['id']: postId, comments } = post
-
-            if(postId === id) {
+            const transaction = db.transaction(OBJ_STORE_NAME, 'readwrite')
+            const store = transaction.objectStore(OBJ_STORE_NAME)
+            const cursor = store.openCursor()
+    
+            cursor.addEventListener('success', ({ target }) => {
                 
-                const newComment = new Comment(postedBy, comment)
-                comments.push(newComment)
-
-                const update = cursor.update(post)
-
-            }
-            
-            cursor.continue()
-
+                const { ['result']: cursor } = target
+                
+                if(!cursor) { return }
+    
+                const post = cursor.value
+                const { ['id']: postId, comments } = post
+    
+                if(postId === id) {
+                    
+                    const newComment = new Comment(postedBy, comment)
+                    comments.push(newComment)
+    
+                    const update = cursor.update(post)
+    
+                }
+                
+                cursor.continue()
+    
+            })
         })
-    })
+    }
 }

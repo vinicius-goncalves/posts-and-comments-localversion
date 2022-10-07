@@ -1,10 +1,14 @@
-import { getAllPosts } from './storage.js'
+import { STORAGE } from '../storage.js'
+import { POST_CREATE_INTERACTIONS } from './post-creation.js'
 
 const postsWrapper = document.querySelector('[class="posts-wrapper"]')
 
-window.addEventListener('DOMContentLoaded', (event) => {
+const allCloseTargetButtons = document.querySelectorAll('[data-target-close]')
+const allOpenTargetButtons = document.querySelectorAll('[data-open-target]')
 
-    getAllPosts(posts => {
+function initPosts() {
+
+    STORAGE.getAllPosts(posts => {
 
         const postsDivs = posts.map(post => {
             
@@ -114,5 +118,35 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
         postsDivs.forEach(div => postsWrapper.append(div))
         
+    })
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    initPosts()
+    POST_CREATE_INTERACTIONS.init()
+})
+
+Array.prototype.forEach.call(allCloseTargetButtons, (closeButton) => {
+    closeButton.addEventListener('click', (event) => {
+        
+        const targetClicked = event.target
+        const datasetTargetClose = targetClicked.dataset.targetClose
+        
+        document.querySelector(`[data-wrapper="${datasetTargetClose}"]`)
+            ?.setAttribute('style', 'display: none;')
+        
+
+    })
+})
+
+Array.prototype.forEach.call(allOpenTargetButtons, (openButton) => {
+    
+    openButton.addEventListener('click', (event) => {
+    
+        const targetClicked = event.target
+        const datasetOpenTarget = targetClicked.dataset.openTarget
+        document.querySelector(`[data-wrapper="${datasetOpenTarget}"]`)
+            ?.setAttribute('style', 'display: flex;')
+
     })
 })

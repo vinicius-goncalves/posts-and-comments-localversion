@@ -2,6 +2,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap');
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
+i { user-select: none; }
+
 :root {
     --color0: #2ECC71;
     --color1: #54D66A;
@@ -9,15 +11,39 @@
     --color3: #FFFFFF;
     --color4: #DBDBDB;
     --color5: #0D0D0D;
+    --color6: #FF0000;
 
     font-family: 'Source Sans Pro', sans-serif;
     font-size: 17px;
 }
 
-header {
+/*Test*/
+
+[data-open-target="create-new-post"] { font-size: 2rem; font-weight: bold; padding: 10px; margin: 10px; border-radius: 10px; border: none; box-shadow: 10px 10px var(--color0); cursor: pointer; position: fixed; bottom: 10px; right: 10px; z-index: 1; }
+
+[data-wrapper="create-new-post"] { position: fixed; top: 0; background-color: #0d0d0db0; min-height: 100vh; width: 100vw; z-index: 1; display: flex; justify-content: center; align-items: center; display: none; }
+
+[data-content="create-new-post"] h1 { color: black; }
+
+[data-content="create-new-post"] { background-color: white; width: 70vw; min-height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 10px; border-radius: 10px 50px; position: relative; }
+
+[data-target-close="create-new-post"] { position: absolute; right: 25px; top: 25px; font-size: 2.5rem !important; color: black; transition: color 200ms; }
+
+[data-target-close="create-new-post"]:hover { color: var(--color6); cursor: pointer }
+
+[data-new-post] {
+    max-width: 100%;
+    width: 500px;
     padding: 10px;
-    text-align: center;
+    border-radius: 10px;
+    border: 2.5px solid var(--color0);
+    margin: 10px;
 }
+
+[data-button="create-new-post"] { max-width: 100%; width: 250px; padding: 10px; font-size: 1rem; font-weight: bold; border-radius: 10px; border: none; background-color: var(--color0); color: white; cursor: pointer; transition: transform 200ms; }
+[data-button="create-new-post"]:active { transform: scale(.95); }
+
+header { padding: 10px; text-align: center; }
 
 h1 {
     color: white;
@@ -202,6 +228,7 @@ body {
 
 @media screen and (max-width: 600px) {
 
+    [data-js="create-new-topic"] { font-size: 1.5rem }
     .post {
         word-break: break-all;
     }
