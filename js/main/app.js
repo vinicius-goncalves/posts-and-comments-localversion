@@ -135,7 +135,6 @@ Array.prototype.forEach.call(allCloseTargetButtons, (closeButton) => {
         document.querySelector(`[data-wrapper="${datasetTargetClose}"]`)
             ?.setAttribute('style', 'display: none;')
         
-
     })
 })
 

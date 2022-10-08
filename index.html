@@ -9,6 +9,12 @@
     </head>
     <body>
 
+        <ul>
+            <p>a</p>
+            <p>b</p>
+            <p>c</p>
+        </ul>
+
         <button data-open-target="create-new-post">
             New post
             <i class="material-icons">add_circle</i>
@@ -20,9 +26,13 @@
                 <i class="material-icons" data-target-close="create-new-post">close</i>
 
                 <h1>Post creation</h1>
+                
+                <input type="text" data-new-post="title" value="Lorem ipsum, dolor sit amet consectetur adipisicing elit. Corrupti, voluptatibus.">
 
-                <input type="text" data-new-post="title">
-                <input type="text" data-new-post="description">
+                <div class="new-post-text-area">
+                    <textarea data-new-post="description" minlength="10" maxlength="256">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Corrupti, voluptatibus</textarea>
+                    <span data-new-post-details="description-char-length">?</span>
+                </div>
 
                 <input type="button" data-button="create-new-post" value="Create">
 
