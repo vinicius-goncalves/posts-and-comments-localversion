@@ -9,18 +9,12 @@
     </head>
     <body>
 
-        <ul>
-            <p>a</p>
-            <p>b</p>
-            <p>c</p>
-        </ul>
-
         <button data-open-target="create-new-post">
             New post
             <i class="material-icons">add_circle</i>
         </button>
 
-        <div data-wrapper="create-new-post">
+        <div data-wrapper="create-new-post" style="display: none;">
             <div data-content="create-new-post">
 
                 <i class="material-icons" data-target-close="create-new-post">close</i>
@@ -44,45 +38,10 @@
             <span>Local version</span>
         </header>
 
-        <div class="posts-wrapper">
-
-            <div class="post" data-post-id="9999">
-
-                <div class="post-header">
-                    <h2 class="post-title">Title</h2>
-                    <span class="post-id">(9999)</span>
-                </div>
-
-                <p class="post-description">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos perferendis temporibus consequatur impedit excepturi, incidunt architecto, voluptate neque aut obcaecati iure perspiciatis pariatur qui, ducimus amet ipsum provident saepe harum tenetur consectetur? Sunt inventore ipsam modi a aliquid repudiandae voluptatem eos. Aspernatur adipisci, harum nemo ipsam sequi voluptatem accusamus id!</p>
-                <ul class="post-statistics">
-                    <li>Posted by: a32fd</li>
-                    <li>Total comments: 0</li>
-                </ul>
-
-                <div class="comments-section">
-                    <h2 class="comments-sectiont-title">Comments</h2>
-                    <span class="comments-not-found">There are not any comments yet</span>
-
-                    <div class="commentary" data-comment-user-id="9999" data-comment-id="12rafF">
-                        <p class="posted-by">Posted by: <span>?</span></p>
-                        <p class="user-commentary">Commentary</p>
-                    </div>
-
-                </div>
-
-                <div class="post-avaliations">
-                    <input class="input" type="text" data-js="comment-text">
-                    <button class="input" type="button" data-js="add-comment">
-                        <i class="material-icons">reply</i>
-                    </button>
-                </div>
-            </div>
-
-        </div>
+        <div class="posts-wrapper"></div>
 
         <script src="js/main/app.js" type="module"></script>
         <script src="js/storage.js" type="module"></script>
-        <script src="js/utils.js"></script>
 
     </body>
 </html>

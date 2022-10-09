@@ -1,4 +1,6 @@
 import { Post, Comment } from './post-classes.js'
+import { randomID } from './utils.js'
+
 export { STORAGE }
 
 const DB_NAME = 'posts-and-comments'
@@ -51,20 +53,30 @@ const STORAGE = {
         })
     },
     
-    createNewPost: function (id, title, description) {
+    createNewPost: function (id, title, description, postedBy, callback = null) {
     
         dbPromise.then(db => {
             
             const transaction = db.transaction(OBJ_STORE_NAME, 'readwrite')
             const store = transaction.objectStore(OBJ_STORE_NAME)
     
-            const newPostObj = new Post(id, title, description)
-            store.put(newPostObj)
-    
+            const newPostObj = new Post(id, title, description, postedBy)
+            const query = store.put(newPostObj)
+
+            query.addEventListener('success', (event) => {
+
+                const objectStoreID = event.target.result
+
+                const deepQuery = store.get(objectStoreID)
+                
+                deepQuery.addEventListener('success', (event) => {
+                    callback(event.target.result)
+                })
+            })
         })
     },
     
-    addNewComment: function (id, postedBy, comment) {
+    addNewComment: function (postIdToAdd, postedBy, comment, callback) {
     
         dbPromise.then(db => {
             
@@ -81,17 +93,54 @@ const STORAGE = {
                 const post = cursor.value
                 const { ['id']: postId, comments } = post
     
-                if(postId === id) {
+                if(postId === postIdToAdd) {
                     
-                    const newComment = new Comment(postedBy, comment)
+                    const newComment = new Comment(randomID(), postedBy, comment)
                     comments.push(newComment)
     
                     const update = cursor.update(post)
-    
+
+                    update.addEventListener('success', () => {
+
+                        const commentsSection = document.querySelector(`[data-post-id="${postIdToAdd}"]`).querySelector('[class="comments-section"]')
+                        
+                        const { id, postedBy, comment } = newComment
+
+                        const div = document.createElement('div')
+                        div.setAttribute('class', 'commentary')
+
+                        const p_postedBy = document.createElement('p')
+                        p_postedBy.setAttribute('class', 'posted-by')
+                        p_postedBy.textContent = `Posted by: ${postedBy}`
+
+                        const p_userCommentary = document.createElement('p')
+                        p_userCommentary.setAttribute('class', 'user-commentary')
+
+                        const p_userCommentaryTextNode = document.createTextNode(comment)
+                        p_userCommentary.appendChild(p_userCommentaryTextNode)
+
+                        div.append(p_postedBy, p_userCommentary)
+
+                        commentsSection.append(div)
+
+                    })
                 }
                 
                 cursor.continue()
     
+            })
+        })
+    },
+
+    getTotalComments: function (postID, callback) {
+
+        dbPromise.then(db => {
+            const transaction = db.transaction(OBJ_STORE_NAME, 'readonly')
+            const store = transaction.objectStore(OBJ_STORE_NAME)
+            const query = store.get(postID)
+            
+            query.addEventListener('success', (event) => {
+                callback(event.target.result.comments.length)
             })
         })
     }
