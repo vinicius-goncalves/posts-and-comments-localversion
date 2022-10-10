@@ -1,4 +1,10 @@
-export { randomID, randomUserID, hueColorByPercentage, getDataDOMElement }
+export { 
+    randomID, 
+    randomUserID, 
+    hueColorByPercentage, 
+    getDataDOMElement, 
+    placeholders 
+}
 
 function randomID () {
     
@@ -30,3 +36,8 @@ function getDataDOMElement(attribute, value) {
     return itemFound
 
 }
+
+const placeholders = (postID, type) => ({
+    '${post.id}': postID,
+    '${post.title}': document.querySelector(`[data-post-id="${postID}"]`).querySelector('[class="post-title"]').childNodes[0].textContent.replace(/\"/, '').trim()
+})[type]

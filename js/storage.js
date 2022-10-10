@@ -35,48 +35,46 @@ const dbPromise = new Promise(resolve => {
 
 const STORAGE = {
 
-    makeTransaction: function() {
-
+    makeTransaction: async function(objStore, transactionType = 'readonly') {
+        const db = await dbPromise
+        const transaction = db.transaction(objStore, transactionType)
+        const store = transaction.objectStore(objStore)
+        return store
     },
 
-    getAllPosts: function (callback) {
-    
-        dbPromise.then(db => {
-            const transaction = db.transaction(OBJ_STORE_NAME, 'readonly')
-            const store = transaction.objectStore(OBJ_STORE_NAME)
+    getAllPosts: async function (callback) {
+
+            const store = await this.makeTransaction(OBJ_STORE_NAME)
             const query = store.getAll()
             
             query.addEventListener('success', ({ target }) => {
                 const posts = target.result
                 callback(posts)
-            })
+
         })
     },
     
-    createNewPost: function (id, title, description, postedBy, callback = null) {
+    createNewPost: async function (id, title, description, postedBy, callback = null) {
     
-        dbPromise.then(db => {
+        const store = await this.makeTransaction(OBJ_STORE_NAME, 'readwrite')
+    
+        const newPostObj = new Post(id, title, description, postedBy)
+        const query = store.put(newPostObj)
+
+        query.addEventListener('success', (event) => {
+
+            const objectStoreID = event.target.result
+
+            const deepQuery = store.get(objectStoreID)
             
-            const transaction = db.transaction(OBJ_STORE_NAME, 'readwrite')
-            const store = transaction.objectStore(OBJ_STORE_NAME)
-    
-            const newPostObj = new Post(id, title, description, postedBy)
-            const query = store.put(newPostObj)
+            deepQuery.addEventListener('success', (event) => {
+                callback(event.target.result)
 
-            query.addEventListener('success', (event) => {
-
-                const objectStoreID = event.target.result
-
-                const deepQuery = store.get(objectStoreID)
-                
-                deepQuery.addEventListener('success', (event) => {
-                    callback(event.target.result)
-                })
             })
         })
     },
     
-    addNewComment: function (postIdToAdd, postedBy, comment, callback) {
+    addNewComment: function (postIdToAdd, postedBy, comment) {
     
         dbPromise.then(db => {
             
@@ -132,16 +130,13 @@ const STORAGE = {
         })
     },
 
-    getTotalComments: function (postID, callback) {
+    getTotalComments: async function (postID, callback) {
 
-        dbPromise.then(db => {
-            const transaction = db.transaction(OBJ_STORE_NAME, 'readonly')
-            const store = transaction.objectStore(OBJ_STORE_NAME)
-            const query = store.get(postID)
-            
-            query.addEventListener('success', (event) => {
-                callback(event.target.result.comments.length)
-            })
+        const store = await this.makeTransaction(OBJ_STORE_NAME, 'readonly')
+        const query = store.get(postID)
+        
+        query.addEventListener('success', (event) => {
+            callback(event.target.result.comments.length)
         })
     }
 }

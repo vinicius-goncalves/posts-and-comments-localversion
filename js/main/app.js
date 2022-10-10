@@ -74,13 +74,47 @@ function renderPosts() {
 
             button.addEventListener('click', (event) => {
 
-                // console.log(event.target.closest('[data-post-id]'))
                 const closestElementPostID = event.target.closest('[data-post-id]')
 
                 if(closestElementPostID.nodeType === Node.ELEMENT_NODE) {
 
+                    if(input.value.length === 0) {
+                        console.log('Write something before sending your comment.')
+                        return
+                    }
+
+                    const inputWords = input.value.split(' ')
+                    const placeholderAmount = []
+
+                    for(let i = 0; i < inputWords.length; i++) {
+                        if(inputWords[i].startsWith('${')) {
+                            placeholderAmount.push({
+                                type: inputWords[i],
+                                index: i
+                            })
+                        }
+                    }
+
                     const postID = closestElementPostID.dataset.postId
-                    console.log(postID)
+
+                    if(placeholderAmount.length >= 0) {
+                        placeholderAmount.forEach((placeholder, index) => {
+                            const { type } = placeholder
+                            
+                            import('../utils.js').then(modules => {
+                                const placeholderObj = modules.placeholders(id, type)
+
+                                inputWords[placeholder.index] = inputWords[placeholder.index].replace(type, placeholderObj)
+
+                                if(index === placeholderAmount.length - 1) {
+                                    STORAGE.addNewComment(postID, USER.userID, inputWords.join(' '))
+
+                                }
+                            })
+                        })
+                        return
+                    }
+
                     STORAGE.addNewComment(postID, USER.userID, input.value)
 
                 }
@@ -119,13 +153,21 @@ function renderPosts() {
                 p_postedBy.setAttribute('class', 'posted-by')
                 p_postedBy.textContent = `Posted by: ${comment.postedBy}`
 
+                const span_postID = document.createElement('span')
+                const textContent_span_postID = document.createTextNode(`${comment.id}`)
+                span_postID.append(textContent_span_postID)
+                
+                const classAttribute_span_postID = document.createAttribute('class')
+                classAttribute_span_postID.value = 'user-comment-post-id'
+                span_postID.setAttributeNode(classAttribute_span_postID)
+
                 const p_userCommentary = document.createElement('p')
                 p_userCommentary.setAttribute('class', 'user-commentary')
 
                 const p_userCommentaryTextNode = document.createTextNode(comment.comment)
                 p_userCommentary.appendChild(p_userCommentaryTextNode)
 
-                div.append(p_postedBy, p_userCommentary)
+                div.append(p_postedBy, span_postID, p_userCommentary)
 
                 return div
             })
