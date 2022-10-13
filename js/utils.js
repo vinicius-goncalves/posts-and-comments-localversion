@@ -3,7 +3,8 @@ export {
     randomUserID, 
     hueColorByPercentage, 
     getDataDOMElement, 
-    placeholders 
+    placeholders,
+    createElement
 }
 
 function randomID () {
@@ -41,3 +42,51 @@ const placeholders = (postID, type) => ({
     '${post.id}': postID,
     '${post.title}': document.querySelector(`[data-post-id="${postID}"]`).querySelector('[class="post-title"]').childNodes[0].textContent.replace(/\"/, '').trim()
 })[type]
+
+function createElement(newElementObj, appendWhere = null) {
+    
+    const objEntries = Object.entries(newElementObj)[0]
+
+    const [ element, attributes ] = objEntries
+
+    const newElement = document.createElement(element)
+    
+    const entriesAttribute = Object.entries(attributes)
+
+    entriesAttribute.forEach(pair => {
+
+        const [ attribute, value ] = pair
+
+        if(attribute === 'eventListener' && value.active) {
+            
+            const { eventType, listener } = value
+            newElement.addEventListener(eventType, listener)
+            return
+
+        }
+
+        if(attribute === 'textNodeContent' && value.active) {
+
+            const { textContent } = value
+            
+            const newTextNode = document.createTextNode(textContent)
+            newElement.append(newTextNode)
+            return
+
+        }
+
+        const newAttribute = document.createAttribute(attribute)
+        newAttribute.value = value
+
+        newElement.setAttributeNode(newAttribute)
+
+    })
+
+    if(appendWhere !== null) {
+        appendWhere.append(newElement)
+        return
+    }
+
+    return newElement
+    
+}

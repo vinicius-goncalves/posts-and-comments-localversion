@@ -130,13 +130,35 @@ const STORAGE = {
         })
     },
 
-    getTotalComments: async function (postID, callback) {
+    getTotalComments: async function (postID) {
 
         const store = await this.makeTransaction(OBJ_STORE_NAME, 'readonly')
         const query = store.get(postID)
-        
-        query.addEventListener('success', (event) => {
-            callback(event.target.result.comments.length)
+
+        return new Promise(resolve => {
+            query.addEventListener('success', (event) => {
+                resolve(event.target.result.comments.length)
+            })
         })
     }
+
+    // allPostsInformations: async function() {
+        
+    //     const store = await this.makeTransaction(OBJ_STORE_NAME, 'readonly')
+    //     const query = store.getAll()
+
+    //     query.addEventListener('success', (event) => {
+            
+    //         const posts = event.target.result
+            
+    //         const postsToObj = posts.map(post => {
+
+    //             const { id, comments } = post
+
+    //             return { 
+    //                 postID: id,
+    //             }
+    //         })
+    //     })
+    // }
 }

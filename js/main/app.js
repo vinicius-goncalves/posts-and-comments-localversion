@@ -1,7 +1,8 @@
-import { randomUserID } from '../utils.js'
 import { STORAGE } from '../storage.js'
 import { POST_CREATE_INTERACTIONS } from './post-creation.js'
 import { USER } from '../user.js'
+import { createElement } from '../utils.js'
+import { INITIAL_HOME_ELEMENTS } from './dom-elements.js'
 
 const postsWrapper = document.querySelector('[class="posts-wrapper"]')
 
@@ -16,109 +17,31 @@ function renderPosts() {
             
             const { id, title, description, postedBy, comments } = post
             
-            const div_post = document.createElement('div')
-            div_post.setAttribute('class', 'post')
-            div_post.setAttribute('data-post-id', id)
+            const div_post = createElement(INITIAL_HOME_ELEMENTS(id).div_post)
 
-            const div_postHeader = document.createElement('div')
-            div_postHeader.setAttribute('class', 'post-header')
-
-            const h2_postHeader = document.createElement('h2')
-            h2_postHeader.setAttribute('class', 'post-title')
-            h2_postHeader.textContent = title
-
-            const span_postHeader = document.createElement('span')
-            span_postHeader.setAttribute('class', 'post-id')
-            span_postHeader.textContent = `(${id})`
-
+            const div_postHeader = createElement(INITIAL_HOME_ELEMENTS(id).div_postHeader)
+            const h2_postHeader = createElement(INITIAL_HOME_ELEMENTS(id, title).h2_postHeader)
+            const span_postHeader = createElement(INITIAL_HOME_ELEMENTS(id).span_postHeader)
             div_postHeader.append(h2_postHeader, span_postHeader)
 
-            const p = document.createElement('p')
-            p.setAttribute('class', 'post-description')
-            p.textContent = description
+            const p_postDescription = createElement(INITIAL_HOME_ELEMENTS(null, null, description).p_postDescription)
 
-            const ul = document.createElement('ul')
-            ul.setAttribute('class', 'post-statistics')
+            const ul_postStatistics = createElement(INITIAL_HOME_ELEMENTS().ul_postStatistics)
+            const li_postedBy = createElement(INITIAL_HOME_ELEMENTS(null, null, null, postedBy).li_postedBy)
 
-            const li_postedBy = document.createElement('li')
-            li_postedBy.textContent = `Posted by: ${postedBy}` 
-
-            const li_totalComments = document.createElement('li')
-            STORAGE.getTotalComments(id, result => {
-                li_totalComments.textContent = `Total Comments: ${result}`
+            STORAGE.getTotalComments(id).then(result => {
+                const li_totalComments = createElement(INITIAL_HOME_ELEMENTS(id, null, null, null, result).li_totalComments)
+                ul_postStatistics.append(li_postedBy, li_totalComments)
             })
 
-            ul.append(li_postedBy, li_totalComments)
-
-            const div_commentsSection = document.createElement('div')
-            div_commentsSection.setAttribute('class', 'comments-section')
-            
-            const h2_commentsSection = document.createElement('h2')
-            h2_commentsSection.setAttribute('class', 'comments-section-title')
-            h2_commentsSection.textContent = 'Comments'
-
+            const div_commentsSection = createElement(INITIAL_HOME_ELEMENTS().div_commentsSection)
+            const h2_commentsSection = createElement(INITIAL_HOME_ELEMENTS().h2_commentsSection)
             div_commentsSection.append(h2_commentsSection)
 
-            const div_postAvaliations = document.createElement('div')
-            div_postAvaliations.setAttribute('class', 'post-avaliations')
+            const div_postAvaliations = createElement(INITIAL_HOME_ELEMENTS().div_postAvaliations)
 
-            const input = document.createElement('input')
-            input.setAttribute('class', 'input')
-            input.setAttribute('type', 'text')
-            input.setAttribute('data-js', 'comment-text')
-            
-            const button = document.createElement('button')
-            button.setAttribute('class', 'input')
-            button.setAttribute('type', 'button')
-            button.setAttribute('data-js', 'add-comment')
-
-            button.addEventListener('click', (event) => {
-
-                const closestElementPostID = event.target.closest('[data-post-id]')
-
-                if(closestElementPostID.nodeType === Node.ELEMENT_NODE) {
-
-                    if(input.value.length === 0) {
-                        console.log('Write something before sending your comment.')
-                        return
-                    }
-
-                    const inputWords = input.value.split(' ')
-                    const placeholderAmount = []
-
-                    for(let i = 0; i < inputWords.length; i++) {
-                        if(inputWords[i].startsWith('${')) {
-                            placeholderAmount.push({
-                                type: inputWords[i],
-                                index: i
-                            })
-                        }
-                    }
-
-                    const postID = closestElementPostID.dataset.postId
-
-                    if(placeholderAmount.length >= 0) {
-                        placeholderAmount.forEach((placeholder, index) => {
-                            const { type } = placeholder
-                            
-                            import('../utils.js').then(modules => {
-                                const placeholderObj = modules.placeholders(id, type)
-
-                                inputWords[placeholder.index] = inputWords[placeholder.index].replace(type, placeholderObj)
-
-                                if(index === placeholderAmount.length - 1) {
-                                    STORAGE.addNewComment(postID, USER.userID, inputWords.join(' '))
-
-                                }
-                            })
-                        })
-                        return
-                    }
-
-                    STORAGE.addNewComment(postID, USER.userID, input.value)
-
-                }
-            })
+            const input_commentText = createElement(INITIAL_HOME_ELEMENTS().input_commentText)
+            const button_addComment = createElement(INITIAL_HOME_ELEMENTS(null, null, null, null, null, input_commentText).button_addComment)
 
             const i = document.createElement('i')
             i.setAttribute('class', 'material-icons')
@@ -126,20 +49,16 @@ function renderPosts() {
             const i_textNode = document.createTextNode('reply')
             i.appendChild(i_textNode)
 
-            button.append(i)
-
-            div_postAvaliations.append(input, button)
-
+            button_addComment.append(i)
+            div_postAvaliations.append(input_commentText, button_addComment)
             div_post.append(div_postAvaliations)
 
             if(!(comments.length) >= 1) {
 
-                const span = document.createElement('span')
-                span.setAttribute('class', 'comments-not-found')
-                span.textContent = 'There are not any comments yet'
-                div_commentsSection.append(span)
+                const span_commentsNotFound = createElement(INITIAL_HOME_ELEMENTS().span_commentsNotFound)
+                div_commentsSection.append(span_commentsNotFound)
 
-                div_post.append(div_postHeader, p, ul, div_commentsSection, div_postAvaliations)
+                div_post.append(div_postHeader, p_postDescription, ul_postStatistics, div_commentsSection, div_postAvaliations)
 
                 return div_post
             }
@@ -174,7 +93,7 @@ function renderPosts() {
 
             commentsSection.forEach(commentDiv => div_commentsSection.append(commentDiv))
 
-            div_post.append(div_postHeader, p, ul, div_commentsSection, div_postAvaliations)
+            div_post.append(div_postHeader, p_postDescription, ul_postStatistics, div_commentsSection, div_postAvaliations)
 
             return div_post
 
