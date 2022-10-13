@@ -1,6 +1,5 @@
-import { STORAGE } from '../storage.js'
+import { STORAGE, USER } from '../storage.js'
 import { POST_CREATE_INTERACTIONS } from './post-creation.js'
-import { USER } from '../user.js'
 import { createElement } from '../utils.js'
 import { INITIAL_HOME_ELEMENTS } from './dom-elements.js'
 
@@ -97,8 +96,6 @@ function handleTargetClicked({ target }) {
     const datasetObjKey = Object.keys(datasetTargetClicked)[0]
     
     const itemVisibility = datasetObjKey === 'targetClose' ? 'display: none;' : 'display: flex;'
-
-    console.log(datasetObjKey, itemVisibility)
     
     return document.querySelector(`[data-wrapper="${datasetTargetClicked[datasetObjKey]}"]`)
         .setAttribute('style', itemVisibility)

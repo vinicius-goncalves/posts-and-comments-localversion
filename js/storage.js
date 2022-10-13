@@ -1,7 +1,7 @@
 import { Post, Comment } from './post-classes.js'
 import { randomID } from './utils.js'
 
-export { STORAGE }
+export { STORAGE, USER }
 
 const DB_NAME = 'posts-and-comments'
 const DB_VERSION = 1
@@ -141,24 +141,25 @@ const STORAGE = {
             })
         })
     }
+}
 
-    // allPostsInformations: async function() {
-        
-    //     const store = await this.makeTransaction(OBJ_STORE_NAME, 'readonly')
-    //     const query = store.getAll()
+export { USER }
 
-    //     query.addEventListener('success', (event) => {
+const USER = {
+
+    setupUser: function() {
+        if(localStorage.getItem('posts_user') === null) {
+            localStorage.setItem('posts_user', randomUserID())
+        }
+    },
+
+    get userID () {
+        if(localStorage.getItem('posts_user') !== null) {
+            return localStorage.getItem('posts_user')
+        } 
             
-    //         const posts = event.target.result
-            
-    //         const postsToObj = posts.map(post => {
+        this.setupUser()
+        return this.userID
 
-    //             const { id, comments } = post
-
-    //             return { 
-    //                 postID: id,
-    //             }
-    //         })
-    //     })
-    // }
+    }
 }
