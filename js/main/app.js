@@ -65,30 +65,16 @@ function renderPosts() {
 
             const commentsSection = comments.map(comment => {
                 
-                const div = document.createElement('div')
-                div.setAttribute('class', 'commentary')
+                const div_commentDiv = createElement(INITIAL_HOME_ELEMENTS().div_commentDiv)
 
-                const p_postedBy = document.createElement('p')
-                p_postedBy.setAttribute('class', 'posted-by')
-                p_postedBy.textContent = `Posted by: ${comment.postedBy}`
+                const p_postedBy = createElement(INITIAL_HOME_ELEMENTS(null, null, null, postedBy).p_postedBy)
+                const span_postID = createElement(INITIAL_HOME_ELEMENTS(id).span_postID)
 
-                const span_postID = document.createElement('span')
-                const textContent_span_postID = document.createTextNode(`${comment.id}`)
-                span_postID.append(textContent_span_postID)
-                
-                const classAttribute_span_postID = document.createAttribute('class')
-                classAttribute_span_postID.value = 'user-comment-post-id'
-                span_postID.setAttributeNode(classAttribute_span_postID)
+                const p_userCommentary = createElement(INITIAL_HOME_ELEMENTS(null, null, null, null, null, null, comment))
 
-                const p_userCommentary = document.createElement('p')
-                p_userCommentary.setAttribute('class', 'user-commentary')
+                div_commentDiv.append(p_postedBy, span_postID, p_userCommentary)
 
-                const p_userCommentaryTextNode = document.createTextNode(comment.comment)
-                p_userCommentary.appendChild(p_userCommentaryTextNode)
-
-                div.append(p_postedBy, span_postID, p_userCommentary)
-
-                return div
+                return div_commentDiv
             })
 
             commentsSection.forEach(commentDiv => div_commentsSection.append(commentDiv))
@@ -104,27 +90,29 @@ function renderPosts() {
     })
 }
 
+function handleTargetClicked({ target }) {
+
+    const targetClicked = target
+    const datasetTargetClicked = targetClicked.dataset
+    const datasetObjKey = Object.keys(datasetTargetClicked)[0]
+    
+    const itemVisibility = datasetObjKey === 'targetClose' ? 'display: none;' : 'display: flex;'
+
+    console.log(datasetObjKey, itemVisibility)
+    
+    return document.querySelector(`[data-wrapper="${datasetTargetClicked[datasetObjKey]}"]`)
+        .setAttribute('style', itemVisibility)
+}
+
 Array.prototype.forEach.call(allCloseTargetButtons, (closeButton) => {
     closeButton.addEventListener('click', (event) => {
-        
-        const targetClicked = event.target
-        const datasetTargetClose = targetClicked.dataset.targetClose
-        
-        document.querySelector(`[data-wrapper="${datasetTargetClose}"]`)
-            ?.setAttribute('style', 'display: none;')
-        
+        handleTargetClicked(event)
     })
 })
 
 Array.prototype.forEach.call(allOpenTargetButtons, (openButton) => {
-    
     openButton.addEventListener('click', (event) => {
-    
-        const targetClicked = event.target
-        const datasetOpenTarget = targetClicked.dataset.openTarget
-        document.querySelector(`[data-wrapper="${datasetOpenTarget}"]`)
-            ?.setAttribute('style', 'display: flex;')
-
+        handleTargetClicked(event)
     })
 })
 
